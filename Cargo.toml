@@ -3,3 +3,8 @@
 name = "remove-duplicate-files"
 version = "0.0.1"
 authors = [ "Yury <yurket2006@yandex.ru>" ]
+
+[dependencies]
+sha2 = "0.7"
+digest = { version = "0.7", features = ["std"]}
+
