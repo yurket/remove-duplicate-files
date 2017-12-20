@@ -1,6 +1,7 @@
-use std::path::Path;
+use std::env;
 use std::fs;
 use std::collections::HashSet;
+use std::path::Path;
 
 extern crate sha2;
 use sha2::{Sha256, Digest};
@@ -18,6 +19,7 @@ fn remove_file_duplicates(dir_path: &Path) -> Result<u32, std::io::Error>{
         let hash = Sha256::digest_reader(&mut file)?;
 
         if file_hashes.contains(& hash) {
+            println!("removing file {:?} as duplicate", path_buf);
             std::fs::remove_file(path_buf.as_path())?;
             n_duplicates += 1;
         }
@@ -32,9 +34,15 @@ fn remove_file_duplicates(dir_path: &Path) -> Result<u32, std::io::Error>{
 
 
 fn main() {
-    let test_dir = Path::new(".");
+    let mut args = env::args();
+    if args.len() != 2 {
+        println!("Error: 1 argument expected");
+        return;
+    }
 
-    match remove_file_duplicates(test_dir) {
+    let dir = args.nth(1).unwrap();
+    let dir_path = std::path::Path::new(&dir);
+    match remove_file_duplicates(dir_path) {
         Ok(n_duplicates) => println!("removed {} duplicates", n_duplicates),
         Err(e) => println!("Error: {}", e),
     }
